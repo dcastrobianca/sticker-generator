@@ -1,28 +1,26 @@
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 public class App {
     public static void main(String[] args) throws Exception {
 
-        String nasaAPIKey ="1it4ENqGhhA1yuwNgJWJvgaOC8BnHNML6I5thq66";
-        String url = "https://imdb-api.com/en/API/Top250Movies/k_05s9gqz7";
-        URI uri = URI.create(url);
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
-        HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
-        String body = response.body();
+        //String nasaAPIKey ="1it4ENqGhhA1yuwNgJWJvgaOC8BnHNML6I5thq66";
+        String urlImDB = "https://imdb-api.com/en/API/Top250Movies/k_05s9gqz7";
+        String urlNasa = "https://api.nasa.gov/planetary/apod?api_key=1it4ENqGhhA1yuwNgJWJvgaOC8BnHNML6I5thq66&start_date=2022-03-23&end_date=2022-03-25";
+        
+        httpClient client = new httpClient();
+        String json = client.retrieveAPIData(urlNasa);
 
-        List<Map<String, String>> movieList = new jsonParse().parse(body);
+        ContentExtractor contentExtrator = new NasaContentExtractor();
+        List<Content> contents = contentExtrator.extraContents(json);
+
         StickerGenerator sticker = new StickerGenerator();
-        for(Map<String, String> movie : movieList){
+        for(Content content : contents){
             //System.out.println(movie.get("image"));
-            System.out.println(movie.get("title"));
-            sticker.generateSticker(movie.get("image"), movie.get("title").replace(":","-")); 
+            System.out.println(content.getTitle());
+            InputStream inputStream = new URL(content.getUrlImage()).openStream();
+            sticker.generateSticker(inputStream, content.getTitle()); 
         }
     
         

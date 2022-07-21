@@ -3,13 +3,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
 import java.awt.Graphics2D;
 import javax.imageio.ImageIO;
 
 public class StickerGenerator {
-    public void generateSticker(String url, String name) throws Exception{
-       InputStream inputStream = new URL(url).openStream();
+    public void generateSticker(InputStream inputStream, String name) throws Exception{
+    
        BufferedImage originalImage = ImageIO.read(inputStream);
 
        int originalWidth = originalImage.getWidth();
